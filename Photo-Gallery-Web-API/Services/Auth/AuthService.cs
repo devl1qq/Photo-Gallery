@@ -2,23 +2,26 @@
 using Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using Photo_Gallery_Web_API.Services.Auth;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Photo_Gallery_Web_API.Dtos.AuthDtos;
 using Photo_Gallery_Web_API.Middleware;
+using Photo_Gallery_Web_API.Services.Gallery;
 
+namespace Photo_Gallery_Web_API.Services.Auth;
 public class AuthService : IAuthService
 {
     private readonly DataContext _context;
     private readonly IConfiguration _configuration;
+    private readonly IGalleryService _galleryService;
 
-    public AuthService(DataContext context, IConfiguration configuration)
+    public AuthService(DataContext context, IConfiguration configuration, IGalleryService galleryService)
     {
         _context = context;
         _configuration = configuration;
+        _galleryService = galleryService;
     }
 
     public async Task<IdentityResult> SignupAsync(SignUp signupDTO)
@@ -53,19 +56,20 @@ public class AuthService : IAuthService
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
+        await _galleryService.CreateFolderForUserAsync(user);
+
         return IdentityResult.Success;
     }
 
-    public async Task<Token> SigninAsync(SignIn signinDTO)
+    public async Task<TokenResponse> SigninAsync(SignIn signinDTO)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == signinDTO.Username);
 
         if (user != null && VerifyPassword(signinDTO.Password, user.Password))
         {
-
-            var result = new Token
+            var result = new TokenResponse
             {
-                token = GenerateJwtToken(user)
+                Token = GenerateJwtToken(user)
             };
 
             return result;
@@ -94,6 +98,7 @@ public class AuthService : IAuthService
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
             new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
+            new Claim(ClaimTypes.Role, user.RoleType),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

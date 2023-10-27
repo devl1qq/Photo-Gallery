@@ -7,5 +7,5 @@ namespace Photo_Gallery_Web_API.Services.Auth;
 public interface IAuthService
 {
     Task<IdentityResult> SignupAsync(SignUp signupDTO);
-    Task<Token> SigninAsync(SignIn signinDTO);
+    Task<TokenResponse> SigninAsync(SignIn signinDTO);
 }

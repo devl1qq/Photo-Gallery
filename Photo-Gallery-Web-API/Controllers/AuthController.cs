@@ -2,11 +2,10 @@
 using Photo_Gallery_Web_API.Dtos.AuthDtos;
 using Photo_Gallery_Web_API.Middleware;
 using Photo_Gallery_Web_API.Services.Auth;
-using System.Threading.Tasks;
 
-namespace Photo_Gallery_Web_API.Controllers
-{
-    [Tags("Auth")]
+namespace Photo_Gallery_Web_API.Controllers;
+
+[Tags("Auth")]
     [Route("api/auth")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -40,16 +39,18 @@ namespace Photo_Gallery_Web_API.Controllers
         }
 
         [HttpPost("signin")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Token))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TokenResponse))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(string))]
         public async Task<IActionResult> Signin([FromBody] SignIn signinDTO)
         {
             var token = await _authService.SigninAsync(signinDTO);
 
             if(token is not null)
+            {
+                
                 return Ok(token);
-
+            }               
             return Unauthorized("Signin failed");
         }
     }
-}
+

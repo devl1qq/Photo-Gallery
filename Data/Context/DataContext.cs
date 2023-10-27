@@ -9,5 +9,8 @@ public class DataContext : DbContext
     public DataContext() : base() { }
 
     public DbSet<User> Users { get; set; }
+    public DbSet<Picture> Pictures { get; set; }
+    public DbSet<UserPictureInteraction> Interactions { get; set; }
+    public DbSet<Album> Albums { get; set; }
 }
 
