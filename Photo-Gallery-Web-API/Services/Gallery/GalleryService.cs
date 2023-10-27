@@ -157,6 +157,14 @@ namespace Photo_Gallery_Web_API.Services.Gallery
 
                 File.Delete(pictureFile);
             }
+            var album = await _context.Albums
+            .Where(a => a.CreatedByUserId == userId && a.Name == albumName)
+            .FirstOrDefaultAsync();
+
+            if (album != null)
+            {
+                _context.Albums.Remove(album);
+            }
 
             Directory.Delete(albumFolderPath);
 

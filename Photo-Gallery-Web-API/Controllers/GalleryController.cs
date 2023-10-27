@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Data.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Photo_Gallery_Web_API.Dtos.GalleryDtos;
 using Photo_Gallery_Web_API.Services.Gallery;
@@ -18,6 +20,8 @@ public class GalleryController : ControllerBase
     }
     [Authorize]
     [HttpPost("create-album-inside-user-folder")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Ok))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
     public async Task<IActionResult> CreateAlbumInsideUserFolder([FromBody] AlbumRequest albumDto)
     {
         try
@@ -38,6 +42,8 @@ public class GalleryController : ControllerBase
     }
     [Authorize]
     [HttpPost("upload-picture")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Ok))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
     public async Task<IActionResult> UploadPicture([FromForm] PictureUpload pictureDto)
     {
         try
@@ -58,6 +64,8 @@ public class GalleryController : ControllerBase
 
     [Authorize]
     [HttpDelete("delete-picture/{photoId}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Ok))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
     public async Task<IActionResult> DeletePicture(Guid photoId)
     {
         try
@@ -83,6 +91,8 @@ public class GalleryController : ControllerBase
 
     [Authorize]
     [HttpDelete("delete-album")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Ok))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
     public async Task<IActionResult> DeleteAlbum([FromBody] AlbumRequest deleteAlbumDto)
     {
         try
@@ -104,6 +114,8 @@ public class GalleryController : ControllerBase
     }
 
     [HttpGet("get-all-my-albums")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<string>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
     public IActionResult GetAllMyAlbums()
     {
         try
@@ -126,7 +138,9 @@ public class GalleryController : ControllerBase
 
     [Authorize]
     [HttpGet("get-pictures-from-album")]
-    public IActionResult GetPicturesFromAlbum([FromBody] AlbumRequest albumDto)
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Picture>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+    public IActionResult GetPicturesFromAlbum([FromQuery] AlbumRequest albumDto)
     {
         try
         {
@@ -145,5 +159,4 @@ public class GalleryController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
-
 }

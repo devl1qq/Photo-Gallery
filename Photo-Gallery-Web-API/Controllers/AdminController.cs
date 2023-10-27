@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Data.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Photo_Gallery_Web_API.Services.Admin;
 
@@ -16,6 +17,8 @@ namespace Photo_Gallery_Web_API.Controllers
         }
 
         [HttpGet("users")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<User>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public async Task<IActionResult> GetAllUsers()
         {
             try
@@ -30,6 +33,8 @@ namespace Photo_Gallery_Web_API.Controllers
         }
 
         [HttpGet("albums/{userId}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Album>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public async Task<IActionResult> GetAlbumsByUserId(Guid userId)
         {
             try
@@ -44,6 +49,8 @@ namespace Photo_Gallery_Web_API.Controllers
         }
 
         [HttpGet("pictures/{albumId}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Picture>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public async Task<IActionResult> GetPicturesByAlbumId(Guid albumId)
         {
             try
@@ -58,6 +65,8 @@ namespace Photo_Gallery_Web_API.Controllers
         }
 
         [HttpDelete("album/{albumName}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public async Task<IActionResult> DeleteAlbumByName(string albumName)
         {
             try
@@ -76,6 +85,8 @@ namespace Photo_Gallery_Web_API.Controllers
         }
 
         [HttpDelete("picture/{pictureId}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public async Task<IActionResult> DeletePictureById(Guid pictureId)
         {
             try

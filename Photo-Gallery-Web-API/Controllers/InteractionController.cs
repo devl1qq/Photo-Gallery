@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Data.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Photo_Gallery_Web_API.Services.Interaction;
 using System;
@@ -19,10 +20,10 @@ namespace Photo_Gallery_Web_API.Controllers
         }
 
         [Authorize]
-        [HttpPost("like")]
+        [HttpPost("like-dislike")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-        public async Task<IActionResult> LikePhoto([FromBody] Guid photoId)
+        public async Task<IActionResult> LikeOrDislikePhoto([FromBody] Guid photoId, [FromQuery] bool like)
         {
             try
             {
@@ -31,13 +32,22 @@ namespace Photo_Gallery_Web_API.Controllers
                 {
                     return BadRequest("Invalid or missing User ID claim.");
                 }
-                bool result = await _interactionService.LikePhoto(userId, photoId);
+
+                bool result = await _interactionService.LikeOrDislikePhoto(userId, photoId, like);
 
                 if (result)
                 {
-                    return Ok("Photo liked successfully.");
+                    if (like)
+                    {
+                        return Ok("Photo liked successfully.");
+                    }
+                    else
+                    {
+                        return Ok("Photo disliked successfully.");
+                    }
                 }
-                return BadRequest("Failed to like the photo.");
+
+                return BadRequest("Failed to like/dislike the photo.");
             }
             catch (Exception ex)
             {
@@ -45,34 +55,10 @@ namespace Photo_Gallery_Web_API.Controllers
             }
         }
 
-        [Authorize]
-        [HttpPost("dislike")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
-        public async Task<IActionResult> DislikePhoto([FromBody] Guid photoId)
-        {
-            try
-            {
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
-                {
-                    return BadRequest("Invalid or missing User ID claim.");
-                }
-                bool result = await _interactionService.DislikePhoto(userId, photoId);
-
-                if (result)
-                {
-                    return Ok("Photo disliked successfully.");
-                }
-                return BadRequest("Failed to dislike the photo.");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
 
         [HttpGet("other-users-albums")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Album>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public async Task<IActionResult> GetOtherUsersAlbums([FromQuery] int page = 1, [FromQuery] int pageSize = 5)
         {
             try
@@ -90,6 +76,8 @@ namespace Photo_Gallery_Web_API.Controllers
         }
 
         [HttpGet("other-users-album-photos")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Picture>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
         public async Task<IActionResult> GetPhotosFromOtherUsersAlbum(
         [FromQuery] Guid albumId,
         [FromQuery] int page = 1,

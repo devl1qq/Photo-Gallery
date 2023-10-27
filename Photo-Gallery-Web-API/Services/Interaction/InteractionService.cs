@@ -13,12 +13,15 @@ public class InteractionService : IInteractionService
         _context = context;
     }
 
-    public async Task<bool> LikePhoto(Guid userId, Guid photoId)
+    public async Task<bool> LikeOrDislikePhoto(Guid userId, Guid photoId, bool like)
     {
         try
         {
             var interaction = await _context.Interactions
                 .FirstOrDefaultAsync(upi => upi.UserId == userId && upi.PictureId == photoId);
+
+            var picture = await _context.Pictures
+                .FirstOrDefaultAsync(p => p.Id == photoId);
 
             if (interaction == null)
             {
@@ -26,95 +29,51 @@ public class InteractionService : IInteractionService
                 {
                     UserId = userId,
                     PictureId = photoId,
-                    IsLiked = true,
-                    IsDisliked = false,
+                    IsLiked = like,
+                    IsDisliked = !like,
                     InteractionTime = DateTime.UtcNow
                 };
 
                 _context.Interactions.Add(interaction);
 
-                var picture = await _context.Pictures
-                    .FirstOrDefaultAsync(p => p.Id == photoId);
-
                 if (picture != null)
                 {
-                    picture.Likes++;
-                    _context.Pictures.Update(picture);
-                }
-            }
-            else
-            {
-                interaction.IsLiked = !interaction.IsLiked;
-                interaction.IsDisliked = false;
-
-                var picture = await _context.Pictures
-                    .FirstOrDefaultAsync(p => p.Id == photoId);
-
-                if (picture != null)
-                {
-                    if (interaction.IsLiked)
+                    if (like)
+                    {
                         picture.Likes++;
+                    }
                     else
-                        picture.Likes--;
-
-                    _context.Pictures.Update(picture);
-                }
-            }
-
-            await _context.SaveChangesAsync();
-            return true;
-        }
-        catch (Exception ex)
-        {
-            return false;
-        }
-    }
-
-    public async Task<bool> DislikePhoto(Guid userId, Guid photoId)
-    {
-        try
-        {
-            var interaction = await _context.Interactions
-                .FirstOrDefaultAsync(upi => upi.UserId == userId && upi.PictureId == photoId);
-
-            if (interaction == null)
-            {
-                interaction = new UserPictureInteraction
-                {
-                    UserId = userId,
-                    PictureId = photoId,
-                    IsLiked = false,
-                    IsDisliked = true,
-                    InteractionTime = DateTime.UtcNow
-                };
-
-                _context.Interactions.Add(interaction);
-
-                var picture = await _context.Pictures
-                    .FirstOrDefaultAsync(p => p.Id == photoId);
-
-                if (picture != null)
-                {
-                    picture.Dislikes++;
+                    {
+                        picture.Dislikes++;
+                    }
                     _context.Pictures.Update(picture);
                 }
             }
             else
             {
-                interaction.IsLiked = false;
-                interaction.IsDisliked = !interaction.IsDisliked;
-
-                var picture = await _context.Pictures
-                    .FirstOrDefaultAsync(p => p.Id == photoId);
-
-                if (picture != null)
+                if (interaction.IsLiked == like)
                 {
-                    if (interaction.IsDisliked)
-                        picture.Dislikes++;
-                    else
-                        picture.Dislikes--;
+                    // User is already in the desired state (like or dislike); do nothing or handle as needed.
+                }
+                else
+                {
+                    interaction.IsLiked = like;
+                    interaction.IsDisliked = !like;
 
-                    _context.Pictures.Update(picture);
+                    if (picture != null)
+                    {
+                        if (like)
+                        {
+                            picture.Likes++;
+                            picture.Dislikes--;
+                        }
+                        else
+                        {
+                            picture.Dislikes++;
+                            picture.Likes--;
+                        }
+                        _context.Pictures.Update(picture);
+                    }
                 }
             }
 
@@ -126,6 +85,8 @@ public class InteractionService : IInteractionService
             return false;
         }
     }
+
+
     public async Task<IEnumerable<Album>> GetAllAlbumsAsync()
     {
         try
