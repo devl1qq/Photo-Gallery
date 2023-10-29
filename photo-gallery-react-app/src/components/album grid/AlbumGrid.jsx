@@ -50,17 +50,15 @@ function AlbumsGrid() {
     try {
       const newAlbumData = {
         albumName: newAlbumName,
-        // Add other necessary data for the new album here
       };
       await createAlbumInsideUserFolder(newAlbumData);
       console.log('New album created successfully');
-      // After creating a new album, you may want to update the album list:
       if (showMyAlbums) {
         fetchMyAlbums(currentPage);
       } else {
         fetchOtherUsersAlbums(currentPage);
       }
-      setNewAlbumName(''); // Clear the input field
+      setNewAlbumName('');
     } catch (error) {
       console.error('Failed to create a new album:', error);
     }
@@ -68,17 +66,14 @@ function AlbumsGrid() {
 
   const toggleShowMyAlbums = () => {
     setShowMyAlbums(!showMyAlbums);
-    setCurrentPage(1); // Reset page when switching between My Albums and Albums of Others
+    setCurrentPage(1);
   };
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
 
-  // Define the handleDeleteAlbum function
   const handleDeleteAlbum = (albumId) => {
-    // This function should update the album list by removing the deleted album.
-    // You can filter the albums array to exclude the deleted album with the given albumId.
     setAlbums((prevAlbums) => prevAlbums.filter((album) => album.id !== albumId));
   };
 
