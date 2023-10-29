@@ -28,9 +28,20 @@ export const createAlbumInsideUserFolder = async (albumData) => {
   }
 };
 
-export const uploadPicture = async (pictureData) => {
+export const uploadPicture = async (albumName, pictureFile, authToken) => {
   try {
-    const response = await api.post('/gallery/upload-picture', pictureData, getConfig());
+    const pictureData = new FormData();
+    pictureData.append('AlbumName', albumName);
+    pictureData.append('PictureFile', pictureFile);
+
+    const response = await api.post('/gallery/upload-picture', pictureData, {
+      headers: {
+        'Authorization': `Bearer ${authToken}`, 
+        'Content-Type': 'multipart/form-data', 
+        'accept': 'text/plain', 
+      },
+    });
+
     console.log('Picture uploaded successfully:', response.data);
     return response.data;
   } catch (error) {

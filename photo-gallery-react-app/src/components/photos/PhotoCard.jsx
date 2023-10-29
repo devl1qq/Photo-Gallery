@@ -22,8 +22,7 @@ const PhotoCard = ({ photo }) => {
           setIsDisliked(interaction.isDisliked);
         }
       })
-      .catch((error) => {
-        setError('Error while checking photo interaction. Please try again later.');
+      .catch((error) => {        
       });
   }, [photo.id]);
 

@@ -1,23 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { uploadPicture } from '../../services/galleryApi';
 
-const UploadButton = ({ authToken, albumName }) => {
+const UploadButton = ({ albumName }) => {
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
+
   const handleUpload = async (e) => {
     e.preventDefault();
 
-    const pictureFile = e.target.elements.pictureFile.files[0];
-
-    if (!pictureFile) {
+    if (!selectedFile) {
       alert('Please select a picture to upload.');
       return;
     }
 
-    const pictureData = new FormData();
-    pictureData.append('AlbumName', albumName);
-    pictureData.append('PictureFile', pictureFile);
+    const authToken = localStorage.getItem('authToken');
+
+    if (!authToken) {
+      alert('Authentication token is missing.');
+      return;
+    }
 
     try {
-      await uploadPicture(pictureData, authToken); // Pass authToken to uploadPicture
+      const pictureData = new FormData();
+      pictureData.append('AlbumName', albumName);
+      pictureData.append('PictureFile', selectedFile);
+
+      await uploadPicture(albumName, pictureData, authToken);
       alert('Picture uploaded successfully.');
     } catch (error) {
       console.error('Error while uploading picture:', error);
@@ -27,7 +38,12 @@ const UploadButton = ({ authToken, albumName }) => {
 
   return (
     <form onSubmit={handleUpload}>
-      <input type="file" name="pictureFile" accept="image/*" />
+      <input
+        type="file"
+        name="pictureFile"
+        accept="image/*"
+        onChange={handleFileChange}
+      />
       <button type="submit">Upload Photo</button>
     </form>
   );

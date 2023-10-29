@@ -7,21 +7,20 @@ const api = axios.create({
 });
 
 export const likeOrDislikePhoto = async (photoId, like, authToken) => {
-    try {
-      const response = await api.post(
-        '/interaction/like-dislike',
-        { photoId, like },
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  };
+  try {
+    const response = await api.post(`/interaction/like-dislike?like=${like}`, `"${photoId}"`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json',
+        'accept': 'text/plain',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 
   export const getOtherUsersAlbums = async (page, pageSize) => {
     try {
