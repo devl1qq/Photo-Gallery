@@ -3,10 +3,11 @@ import './style.css';
 import { useParams } from 'react-router-dom';
 import { getPhotosFromOtherUsersAlbum } from '../../services/interactApi';
 import PhotoCard from './PhotoCard';
-import UploadButton from './UploadButton'; // Import the UploadButton component
+import UploadButton from './UploadButton';
 
 const AlbumPhotos = ({ authToken }) => {
-  const { albumId } = useParams();
+  const { albumId } = useParams(); 
+  const { albumName } = useParams(); 
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,7 +15,7 @@ const AlbumPhotos = ({ authToken }) => {
   useEffect(() => {
     async function fetchAlbumPhotos() {
       try {
-        const fetchedPhotos = await getPhotosFromOtherUsersAlbum(albumId, 1, 5);
+        const fetchedPhotos = await getPhotosFromOtherUsersAlbum(albumId, 1, 5); 
         setPhotos(fetchedPhotos);
         setLoading(false);
       } catch (error) {
@@ -28,7 +29,7 @@ const AlbumPhotos = ({ authToken }) => {
 
   return (
     <div className="album-photos">
-      <UploadButton authToken={authToken} albumId={albumId} /> {/* Add the UploadButton component */}
+      <UploadButton authToken={authToken} albumName={albumName} />
       {loading ? (
         <p>Loading...</p>
       ) : error ? (

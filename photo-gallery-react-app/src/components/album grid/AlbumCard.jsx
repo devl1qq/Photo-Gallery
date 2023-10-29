@@ -27,7 +27,7 @@ const AlbumCard = ({ album, onDelete }) => {
       await deleteAlbumByName(album.name);
       console.log('Album deleted by name successfully');
       // Notify the parent component (AlbumsGrid) to update the albums array
-      onDelete(album.id);
+      onDelete(album.id, album.name); // Pass both albumId and albumName
     } catch (error) {
       console.error('Failed to delete album by name:', error);
       try {
@@ -35,17 +35,16 @@ const AlbumCard = ({ album, onDelete }) => {
         await deleteAlbum({ albumName: album.name });
         console.log('Album deleted by ID successfully');
         // Notify the parent component (AlbumsGrid) to update the albums array
-        onDelete(album.id);
+        onDelete(album.id, album.name); // Pass both albumId and albumName
       } catch (error) {
         console.error('Failed to delete album by ID:', error);
       }
     }
   };
-  
 
   return (
     <div className="album-card">
-      <Link to={`/album/${album.id}`}>
+      <Link to={`/album/${album.id}/${album.name}`}> {/* Pass both albumId and albumName */}
         <h3>{album.name}</h3>
         {coverImage ? (
           <img src={coverImage} alt={album.name} />

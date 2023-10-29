@@ -9,7 +9,7 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/" element={<MainPage />} />
-          <Route path="/album/:albumId" element={<AlbumPage />} />
+          <Route path="/album/:albumId/:albumName" element={<AlbumPage />} />
         </Routes>
       </div>
     </Router>

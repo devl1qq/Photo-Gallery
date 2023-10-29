@@ -32,13 +32,13 @@ export const uploadPicture = async (albumName, pictureFile, authToken) => {
   try {
     const pictureData = new FormData();
     pictureData.append('AlbumName', albumName);
-    pictureData.append('PictureFile', pictureFile);
+    pictureData.append('PictureFile', pictureFile, pictureFile.name); // Include the file name
 
     const response = await api.post('/gallery/upload-picture', pictureData, {
       headers: {
-        'Authorization': `Bearer ${authToken}`, 
-        'Content-Type': 'multipart/form-data', 
-        'accept': 'text/plain', 
+        'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'multipart/form-data',
+        'accept': 'text/plain',
       },
     });
 
