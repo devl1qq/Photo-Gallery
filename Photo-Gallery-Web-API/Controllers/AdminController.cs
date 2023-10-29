@@ -5,7 +5,7 @@ using Photo_Gallery_Web_API.Services.Admin;
 
 namespace Photo_Gallery_Web_API.Controllers
 {
-    [Route("admin")]
+    [Route("api/admin")]
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {

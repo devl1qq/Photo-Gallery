@@ -1,0 +1,71 @@
+h2 {
+    font-size: 20px;
+    margin: 0 0 20px;
+  }
+
+  .photo-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .photo-item {
+    flex-basis: calc(33.33% - 10px);
+    margin: 0;
+  }
+  
+  /* Style for images */
+  .photo-item img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .photo-card {
+    border: 1px solid #ccc;
+    padding: 16px;
+    margin: 16px;
+    text-align: center;
+  }
+  
+  .photo-card img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .photo-card .actions {
+    margin-top: 16px;
+  }
+  
+  .photo-card .actions button {
+    border: none;
+    background-color: #0074d9;
+    color: white;
+    padding: 8px 16px;
+    margin: 4px;
+    cursor: pointer;
+  }
+  
+  .photo-card .actions button.liked {
+    background-color: #ff4136;
+  }
+  
+  .photo-card .actions button.disliked {
+    background-color: #ff851b;
+  }
+  
+  .photo-card .actions button:hover {
+    background-color: #0056b3;
+  }
+  
+  .photo-card .actions button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .photo-card .actions button:disabled:hover {
+    background-color: #ccc;
+  }

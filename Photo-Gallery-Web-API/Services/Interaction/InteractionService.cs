@@ -87,19 +87,20 @@ public class InteractionService : IInteractionService
     }
 
 
-    public async Task<IEnumerable<Album>> GetAllAlbumsAsync()
+    public async Task<IEnumerable<Album>> GetAllAlbumsAsync(int page, int pageSize)
     {
         try
         {
             var albums = await _context.Albums
                 .OrderBy(a => a.Name)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize) 
                 .ToListAsync();
 
             return albums;
         }
         catch (Exception ex)
         {
-            // Handle the exception appropriately
             throw ex;
         }
     }
@@ -123,6 +124,22 @@ public class InteractionService : IInteractionService
                 .ToListAsync();
 
             return pictures;
+        }
+        catch (Exception ex)
+        {
+            // Handle the exception appropriately
+            throw ex;
+        }
+    }
+
+    public async Task<UserPictureInteraction> FindInteractionAsync(Guid userId, Guid photoId)
+    {
+        try
+        {
+            var interaction = await _context.Interactions
+                .FirstOrDefaultAsync(upi => upi.UserId == userId && upi.PictureId == photoId);
+
+            return interaction;
         }
         catch (Exception ex)
         {

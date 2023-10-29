@@ -10,6 +10,6 @@ public interface IGalleryService
     Task CreatePictureInAlbumAsync(Guid userId, PictureUpload pictureDto);
     Task DeletePictureAsync(Guid photoId, Guid userId);
     Task DeleteAlbumAsync(Guid userId, string albumName);
-    IEnumerable<string> GetAllMyAlbums(Guid userId);
+    Task<IEnumerable<Album>> GetAllMyAlbums(Guid userId);
     IEnumerable<Picture> GetAllMyPicturesFromAlbum(Guid userId, string albumName);
 }

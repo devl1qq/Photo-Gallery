@@ -112,9 +112,9 @@ public class GalleryController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
-
+    [Authorize]
     [HttpGet("get-all-my-albums")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<string>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Album>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
     public IActionResult GetAllMyAlbums()
     {
@@ -126,7 +126,7 @@ public class GalleryController : ControllerBase
                 return BadRequest("Invalid or missing User ID claim.");
             }
 
-            var albumNames = _galleryService.GetAllMyAlbums(userId);
+            var albumNames = _galleryService.GetAllMyAlbums(userId).Result;
 
             return Ok(albumNames);
         }

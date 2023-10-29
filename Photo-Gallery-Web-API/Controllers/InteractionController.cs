@@ -63,9 +63,7 @@ namespace Photo_Gallery_Web_API.Controllers
         {
             try
             {
-                
-
-                var albums = await _interactionService.GetAllAlbumsAsync();
+                var albums = await _interactionService.GetAllAlbumsAsync(page, pageSize);
 
                 return Ok(albums);
             }
@@ -94,5 +92,34 @@ namespace Photo_Gallery_Web_API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("find-interaction")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserPictureInteraction))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+        public async Task<IActionResult> FindInteraction([FromQuery] Guid photoId)
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
+                {
+                    return BadRequest("Invalid or missing User ID claim.");
+                }
+
+                var interaction = await _interactionService.FindInteractionAsync(userId, photoId);
+
+                if (interaction != null)
+                {
+                    return Ok(interaction);
+                }
+
+                return BadRequest("Interaction not found.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

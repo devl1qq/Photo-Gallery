@@ -1,0 +1,45 @@
+.albums-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .grid-buttons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .grid-buttons button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #363d44;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .album-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .album-card {
+    width: 275px;
+    height: 450px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 10px;
+    text-align: center;
+    box-shadow: #000000;
+    background-color: #2a2525;
+  }
+  
+  .album-card h3 {
+    font-size: 20px;
+    color: #d7d7d7;
+  }
+  
