@@ -6,8 +6,7 @@ import PhotoCard from './PhotoCard';
 import UploadButton from './UploadButton';
 
 const AlbumPhotos = ({ authToken }) => {
-  const { albumId } = useParams(); 
-  const { albumName } = useParams(); 
+  const { albumId, albumName } = useParams(); 
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,9 +26,17 @@ const AlbumPhotos = ({ authToken }) => {
     fetchAlbumPhotos();
   }, [albumId]);
 
+  const handleDelete = (deletedPhotoId) => {
+    setPhotos((prevPhotos) => prevPhotos.filter((photo) => photo.id !== deletedPhotoId));
+  };
+
+  const handleUpload = (newPhoto) => {
+    setPhotos((prevPhotos) => [newPhoto, ...prevPhotos]);
+  };
+
   return (
     <div className="album-photos">
-      <UploadButton authToken={authToken} albumName={albumName} />
+      <UploadButton authToken={authToken} albumName={albumName} onUpload={handleUpload} />
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
@@ -39,7 +46,7 @@ const AlbumPhotos = ({ authToken }) => {
           {photos.length > 0 ? (
             <div className="photo-list">
               {photos.map((photo) => (
-                <PhotoCard key={photo.id} photo={photo} authToken={authToken} />
+                <PhotoCard key={photo.id} photo={photo} authToken={authToken} onDelete={handleDelete} />
               ))}
             </div>
           ) : (

@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import './style.css';
 import { likeOrDislikePhoto, findInteraction } from '../../services/interactApi';
 import { deletePictureById } from '../../services/adminApi';
-import { deletePicture } from '../../services/galleryApi'
+import { deletePicture } from '../../services/galleryApi';
 
-const PhotoCard = ({ photo }) => {
+const PhotoCard = ({ photo, onDelete }) => {
   const [likes, setLikes] = useState(photo.likes);
   const [dislikes, setDislikes] = useState(photo.dislikes);
   const [isLiked, setIsLiked] = useState(false);
@@ -12,7 +12,6 @@ const PhotoCard = ({ photo }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Retrieve the authToken from local storage
     const authToken = localStorage.getItem('authToken');
 
     findInteraction(photo.id, authToken)
@@ -22,12 +21,11 @@ const PhotoCard = ({ photo }) => {
           setIsDisliked(interaction.isDisliked);
         }
       })
-      .catch((error) => {        
+      .catch((error) => {
       });
   }, [photo.id]);
 
   const handleLikeClick = async () => {
-    // Retrieve the authToken from local storage
     const authToken = localStorage.getItem('authToken');
 
     if (!isLiked) {
@@ -68,23 +66,21 @@ const PhotoCard = ({ photo }) => {
 
   const handleDeleteClick = async () => {
     try {
-      // Attempt to delete the photo by name
       await deletePictureById(photo.id);
       console.log('Photo deleted by name successfully');
-      // Handle successful deletion (e.g., remove the card from the UI).
+      onDelete(photo.id); 
     } catch (error) {
       console.error('Failed to delete photo by name:', error);
       try {
-        // If deleting by name fails, attempt to delete by ID
         await deletePicture(photo.id);
         console.log('Photo deleted by ID successfully');
-        // Handle successful deletion (e.g., remove the card from the UI).
+
+        onDelete(photo.id); 
       } catch (error) {
         setError('Error while deleting the photo. Please try again later.');
       }
     }
   };
-  
 
   return (
     <div className="photo-card">
